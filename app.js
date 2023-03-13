@@ -7,6 +7,7 @@ const logger = require('morgan');
 const employeeModel = require("./model/Employee");
 const app = express();
 
+ require('dotenv').config();
 
 app.use(Cors());
 const path=require('path');
@@ -17,7 +18,7 @@ app.use(BodyParser.urlencoded({extended: true}));
 
 // Task2: create mongoDB connection 
 
-Mongoose.connect("mongodb+srv://p4parvathy214:Lekhaatlas@cluster0.ndcrk8y.mongodb.net/?retryWrites=true&w=majority",{useNewUrlParser: true})
+Mongoose.connect(`mongodb+srv://p4parvathy214:${process.env.MONGODB_PASSWORD}@cluster0.ndcrk8y.mongodb.net/?retryWrites=true&w=majority`,{useNewUrlParser: true})
 
 //Task 2 : write api with error handling and appropriate api mentioned in the TODO below
   .then(() => 
@@ -85,7 +86,8 @@ app.delete('/api/employeelist/:id',async(req,res)=>{
     try{
         const id = req.params.id;
         var deleteData = await employeeModel.findByIdAndDelete(id);
-        res.send("Data Deleted");
+        res.json("Data Deleted");
+        
         }
         catch(error){
             console.log(error)
@@ -105,7 +107,9 @@ app.put('/api/employeelist', async (req, res) => {
       const dataToUpdate = req.body;
       const query = dataToUpdate._id ? { _id: dataToUpdate._id } : { name: dataToUpdate.name };
       const updateData = await employeeModel.findOneAndUpdate(query,{ $set: dataToUpdate });
-          res.send("Data Updated");
+      res.json("Data Updated");
+   
+          
     } 
     catch (error) {
       console.error(error);
